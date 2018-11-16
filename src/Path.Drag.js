@@ -270,6 +270,10 @@ L.Handler.PathDrag = L.Handler.extend( /** @lends  L.Path.Drag.prototype */ {
         latlngs = [latlngs];
         dest    = [dest];
       }
+	  if (L.Util.isArray(latlngs[0][0])) {
+        // multipolygon
+        latlngs[0] = latlngs[0][0];
+      }
       for (i = 0, len = rings.length; i < len; i++) {
         dest[i] = dest[i] || [];
         for (var j = 0, jj = rings[i].length; j < jj; j++) {
