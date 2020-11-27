@@ -315,10 +315,30 @@ L.Handler.PathDrag = L.Handler.extend( /** @lends  L.Path.Drag.prototype */ {
         latlngs = [latlngs];
         dest    = [dest];
       }
-	  if (L.Util.isArray(latlngs[0][0])) {
-        // multipolygon
-        latlngs[0] = latlngs[0][0];
-      }
+      // необходимо представить массив latlngs в виде Array<LatLng[]>, чтобы корректно выполнить трансформацию координат
+      // после переноса векторного слоя
+      var coords = [];
+
+      latlngs.forEach(function (latlng) {
+        if (L.Util.isArray(latlng)) {
+          if (latlng.length > 2) {
+            // polygon
+            coords.push(latlng);
+          } else {
+            // multipolygon
+            var outerRing = latlng[0];
+            var innerRing = latlng[1];
+            if (outerRing) {
+              coords.push(outerRing);
+            }
+            if (innerRing) {
+              coords.push(innerRing);
+            }
+          }
+        }
+      });
+
+      latlngs = coords;
       for (i = 0, len = rings.length; i < len; i++) {
         dest[i] = dest[i] || [];
         for (var j = 0, jj = rings[i].length; j < jj; j++) {
